@@ -1,0 +1,8 @@
+<ion-list>
+  <ion-item>
+    <ion-input type="text" placeholder="Search for Username" [(ngModel)]="mysearch" (ngModelChange)="search()"></ion-input>
+  </ion-item>
+  <button menuClose ion-item *ngFor="let user of getUsers(ce.chat.users)" (click)="openChat(user)">
+    <ion-label>{{user.state.username}}</ion-label>
+  </button>
+</ion-list>

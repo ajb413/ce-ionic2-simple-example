@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{user.state.username}}</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-label *ngFor="let message of messages" [ngClass]="{'text-right': !message.isSelf}">
+    <h6 [ngClass]="{'d-none': message.sameUser}">
+      <span [ngClass]="{'d-none': !message.isSelf}">You: </span>
+      <span>{{message.userName}}</span>
+    </h6>
+    <p>
+      {{message.text}}
+    </p>
+  </ion-label>
+</ion-content>
+<ion-footer>
+  <ion-input type="text" placeholder="Type something here and press ENTER to send"
+             [(ngModel)]="newMessage" (keydown)="handleKeyDown($event)"></ion-input>
+</ion-footer>
