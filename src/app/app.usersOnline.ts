@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ChatEngine } from './chatEngine';
 
-import { ListPage } from '../pages/list/list';
-
 @Component({
   selector: 'app-usersOnline',
   templateUrl: 'app.usersOnline.html'
