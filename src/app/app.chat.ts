@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { NavParams } from 'ionic-angular';
 import { ChatEngine } from "./chatEngine";
 
@@ -6,7 +6,7 @@ import { ChatEngine } from "./chatEngine";
   selector: 'app-chat',
   templateUrl: 'app.chat.html'
 })
-export class AppChat {
+export class AppChat implements OnDestroy {
   ce: ChatEngine;
   user: any;
   messages: any[] = [];
@@ -14,6 +14,7 @@ export class AppChat {
   constructor(navParams: NavParams, chatEngine: ChatEngine) {
     this.user = navParams.get('user');
     this.ce = chatEngine;
+    this.ce.disableUnread(this.user);
     this.messages = this.ce.getMessages(this.user);
   }
 
@@ -22,5 +23,9 @@ export class AppChat {
       this.ce.sendMessage(this.user, { text: this.newMessage });
       this.newMessage = '';
     }
+  }
+
+  ngOnDestroy() {
+    this.ce.enableUnread(this.user);
   }
 }

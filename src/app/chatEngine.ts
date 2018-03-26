@@ -14,6 +14,7 @@ export class ChatEngine {
   chat: any = {};
   private chats: any = {};
   private _messages: any = {};
+  private unread: any = {};
   constructor() {
     this.instance = ChatEngineCore.create(
       {
@@ -41,6 +42,7 @@ export class ChatEngine {
         });
 
         this.chats[payload.sender.uuid] = chat;
+        this.unread[payload.sender.uuid] = 0;
 
         this.listen(payload.sender.uuid);
       });
@@ -53,6 +55,7 @@ export class ChatEngine {
   private listen(uuid) {
     const chat = this.chats[uuid];
     const messages = this._messages[uuid] = [];
+    const unread = this.unread;
 
     chat.on('message', (payload) => {
       // if the last message was sent from the same user
@@ -68,6 +71,11 @@ export class ChatEngine {
       const text = payload.data.text;
 
       const msg = { isSelf, userName, sameUser, sender, text };
+
+      if (!isSelf && sender in unread) {
+        console.error(unread);
+        unread[sender]++;
+      }
 
       messages.push(msg);
     });
@@ -94,6 +102,16 @@ export class ChatEngine {
   sendMessage(user, msg) {
     if (this.chats[user.uuid]) {
       this.chats[user.uuid].emit('message', msg);
+    }
+  }
+
+  enableUnread(user) {
+    this.unread[user.uuid] = 0;
+  }
+
+  disableUnread(user) {
+    if (user.uuid in this.unread) {
+      delete this.unread[user.uuid];
     }
   }
 }
