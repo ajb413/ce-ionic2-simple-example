@@ -3,10 +3,9 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-label>
+    <ion-title>
       {{user.state.username}}
-      <p *ngIf="user.isTyping"> is typing...</p>
-    </ion-label>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
@@ -19,6 +18,9 @@
       {{message.text}}
     </p>
   </ion-label>
+  <ion-badge *ngIf="user.isTyping">
+    {{user.state.username}} is typing...
+  </ion-badge>
 </ion-content>
 <ion-footer>
   <ion-input type="text" placeholder="Type something here and press ENTER to send"
