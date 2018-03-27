@@ -16,7 +16,7 @@ export class MyApp {
 
   rootPage: any = HomePage;
 
-  private ce: any;
+  ce: any;
 
   constructor(public platform: Platform, public statusBar: StatusBar,
               public splashScreen: SplashScreen, public chatEngine: ChatEngine) {
