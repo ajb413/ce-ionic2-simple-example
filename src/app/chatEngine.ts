@@ -44,8 +44,8 @@ export class ChatEngine {
 
         this.chats[payload.sender.uuid] = chat;
         this.chats[payload.sender.uuid].plugin(typing({ timeout: 5000 }));
-        this.chats[payload.sender.uuid].on('$typingIndicator.startTyping', this.startTyping);
-        this.chats[payload.sender.uuid].on('$typingIndicator.stopTyping', this.stopTyping);
+        this.chats[payload.sender.uuid].on('$typingIndicator.startTyping', this._startTyping);
+        this.chats[payload.sender.uuid].on('$typingIndicator.stopTyping', this._stopTyping);
 
         this.unread[payload.sender.uuid] = 0;
 
@@ -86,16 +86,20 @@ export class ChatEngine {
     });
   }
 
-  private startTyping(event) {
+  private _startTyping(event) {
     event.sender.isTyping = true;
   }
 
-  private stopTyping(event) {
+  private _stopTyping(event) {
     event.sender.isTyping = false;
   }
 
-  typing(user) {
+  startTyping(user) {
     this.chats[user.uuid].typingIndicator.startTyping();
+  }
+
+  stopTyping(user) {
+    this.chats[user.uuid].typingIndicator.stopTyping();
   }
 
   getMessages(user) {
@@ -111,8 +115,8 @@ export class ChatEngine {
 
       this.chats[user.uuid].plugin(typing({ timeout: 5000 }));
 
-      this.chats[user.uuid].on('$typingIndicator.startTyping', this.startTyping);
-      this.chats[user.uuid].on('$typingIndicator.stopTyping', this.stopTyping);
+      this.chats[user.uuid].on('$typingIndicator.startTyping', this._startTyping);
+      this.chats[user.uuid].on('$typingIndicator.stopTyping', this._stopTyping);
 
       this.listen(user.uuid);
 

@@ -22,9 +22,10 @@ export class AppChat implements OnDestroy {
     if (event.keyCode == 13) {
       this.ce.sendMessage(this.user, { text: this.newMessage });
       this.newMessage = '';
+      this.ce.stopTyping(this.user);
+    } else {
+      this.ce.startTyping(this.user);
     }
-
-    this.ce.typing(this.user);
   }
 
   ngOnDestroy() {
