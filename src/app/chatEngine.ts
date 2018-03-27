@@ -4,6 +4,7 @@ import { ChatEngineCore } from 'chat-engine';
 declare var require: any;
 const random = require('chat-engine-random-username');
 const search = require('chat-engine-online-user-search');
+const typing = require('chat-engine-typing-indicator');
 
 @Injectable()
 export class ChatEngine {
@@ -42,6 +43,10 @@ export class ChatEngine {
         });
 
         this.chats[payload.sender.uuid] = chat;
+        this.chats[payload.sender.uuid].plugin(typing({ timeout: 5000 }));
+        this.chats[payload.sender.uuid].on('$typingIndicator.startTyping', this.startTyping);
+        this.chats[payload.sender.uuid].on('$typingIndicator.stopTyping', this.stopTyping);
+
         this.unread[payload.sender.uuid] = 0;
 
         this.listen(payload.sender.uuid);
@@ -81,15 +86,33 @@ export class ChatEngine {
     });
   }
 
+  private startTyping(event) {
+    event.sender.isTyping = true;
+  }
+
+  private stopTyping(event) {
+    event.sender.isTyping = false;
+  }
+
+  typing(user) {
+    this.chats[user.uuid].typingIndicator.startTyping();
+  }
+
   getMessages(user) {
     if (!this.chats[user.uuid]) {
       // create a new chat with that channel
       this.chats[user.uuid] = new this.instance.Chat(new Date().getTime());
+
       // we need to auth ourselves before we can invite others
       this.chats[user.uuid].on('$.connected', () => {
         // this fires a private invite to the user
         this.chats[user.uuid].invite(user);
       });
+
+      this.chats[user.uuid].plugin(typing({ timeout: 5000 }));
+
+      this.chats[user.uuid].on('$typingIndicator.startTyping', this.startTyping);
+      this.chats[user.uuid].on('$typingIndicator.stopTyping', this.stopTyping);
 
       this.listen(user.uuid);
 

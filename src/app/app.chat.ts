@@ -23,6 +23,8 @@ export class AppChat implements OnDestroy {
       this.ce.sendMessage(this.user, { text: this.newMessage });
       this.newMessage = '';
     }
+
+    this.ce.typing(this.user);
   }
 
   ngOnDestroy() {
