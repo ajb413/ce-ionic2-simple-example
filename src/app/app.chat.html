@@ -5,7 +5,10 @@
     </button>
     <ion-title>
       {{user.state.username}}
-      <small *ngIf="user.isTyping"> is typing...</small>
+      <small *ngIf="user.isTyping">
+        <br/>
+        is typing...
+      </small>
     </ion-title>
   </ion-toolbar>
 </ion-header>
