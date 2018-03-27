@@ -3,13 +3,10 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>
+    <ion-label>
       {{user.state.username}}
-      <small *ngIf="user.isTyping">
-        <br/>
-        is typing...
-      </small>
-    </ion-title>
+      <p *ngIf="user.isTyping"> is typing...</p>
+    </ion-label>
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
