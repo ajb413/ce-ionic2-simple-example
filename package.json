@@ -30,6 +30,7 @@
     "chat-engine-online-user-search": "0.0.10",
     "chat-engine-random-username": "0.0.5",
     "chat-engine-typing-indicator": "0.0.9",
+    "chat-engine-unread-messages": "0.0.8",
     "ionic-angular": "3.9.2",
     "ionicons": "3.0.0",
     "rxjs": "5.5.7",

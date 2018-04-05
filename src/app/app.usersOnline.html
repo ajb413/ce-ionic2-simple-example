@@ -5,7 +5,7 @@
   <button menuClose ion-item *ngFor="let user of getUsers(ce.chat.users)" (click)="openChat(user)">
     <ion-label>
       {{user.state.username}}
-      <span *ngIf="ce.unread[user.uuid]" class="badge badge-primary">{{ce.unread[user.uuid]}}</span>
+      <span *ngIf="ce.unreadCount(user)" class="badge badge-primary">{{ce.unreadCount(user)}}</span>
     </ion-label>
   </button>
 </ion-list>

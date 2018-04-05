@@ -5,6 +5,7 @@ declare var require: any;
 const random = require('chat-engine-random-username');
 const search = require('chat-engine-online-user-search');
 const typing = require('chat-engine-typing-indicator');
+const unread = require('chat-engine-unread-messages');
 
 @Injectable()
 export class ChatEngine {
@@ -15,7 +16,7 @@ export class ChatEngine {
   chat: any = {};
   private chats: any = {};
   private _messages: any = {};
-  private unread: any = {};
+  private _unreadCount: any = {};
   constructor() {
     this.instance = ChatEngineCore.create(
       {
@@ -43,11 +44,12 @@ export class ChatEngine {
         });
 
         this.chats[payload.sender.uuid] = chat;
+        this.chats[payload.sender.uuid].plugin(unread());
+        this.chats[payload.sender.uuid].on('$unread', this._unread.bind(this));
+
         this.chats[payload.sender.uuid].plugin(typing({ timeout: 5000 }));
         this.chats[payload.sender.uuid].on('$typingIndicator.startTyping', this._startTyping);
         this.chats[payload.sender.uuid].on('$typingIndicator.stopTyping', this._stopTyping);
-
-        this.unread[payload.sender.uuid] = 0;
 
         this.listen(payload.sender.uuid);
       });
@@ -60,7 +62,6 @@ export class ChatEngine {
   private listen(uuid) {
     const chat = this.chats[uuid];
     const messages = this._messages[uuid] = [];
-    const unread = this.unread;
 
     chat.on('message', (payload) => {
       // if the last message was sent from the same user
@@ -77,13 +78,14 @@ export class ChatEngine {
 
       const msg = { isSelf, userName, sameUser, sender, text };
 
-      if (!isSelf && sender in unread) {
-        console.error(unread);
-        unread[sender]++;
-      }
-
       messages.push(msg);
     });
+  }
+
+  private _unread(event) {
+    if (!event.chat.isActive) {
+      this._unreadCount[event.sender.uuid] = event.chat.unreadCount;
+    }
   }
 
   private _startTyping(event) {
@@ -113,8 +115,10 @@ export class ChatEngine {
         this.chats[user.uuid].invite(user);
       });
 
-      this.chats[user.uuid].plugin(typing({ timeout: 5000 }));
+      this.chats[user.uuid].plugin(unread());
+      this.chats[user.uuid].on('$unread', this._unread.bind(this));
 
+      this.chats[user.uuid].plugin(typing({ timeout: 5000 }));
       this.chats[user.uuid].on('$typingIndicator.startTyping', this._startTyping);
       this.chats[user.uuid].on('$typingIndicator.stopTyping', this._stopTyping);
 
@@ -133,12 +137,21 @@ export class ChatEngine {
   }
 
   enableUnread(user) {
-    this.unread[user.uuid] = 0;
+    if (user.uuid in this.chats) {
+      this.chats[user.uuid].isActive = false;
+      this.chats[user.uuid].unreadMessages.inactive();
+    }
   }
 
   disableUnread(user) {
-    if (user.uuid in this.unread) {
-      delete this.unread[user.uuid];
+    if (user.uuid in this.chats) {
+      this.chats[user.uuid].isActive = true;
+      this.chats[user.uuid].unreadMessages.active();
+      delete this._unreadCount[user.uuid];
     }
+  }
+
+  unreadCount(user) {
+    return this._unreadCount[user.uuid];
   }
 }

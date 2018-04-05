@@ -14,8 +14,8 @@ export class AppChat implements OnDestroy {
   constructor(navParams: NavParams, chatEngine: ChatEngine) {
     this.user = navParams.get('user');
     this.ce = chatEngine;
-    this.ce.disableUnread(this.user);
     this.messages = this.ce.getMessages(this.user);
+    this.ce.disableUnread(this.user);
   }
 
   handleKeyDown(event: any) {
