@@ -137,18 +137,14 @@ export class ChatEngine {
   }
 
   enableUnread(user) {
-    if (user.uuid in this.chats) {
-      this.chats[user.uuid].isActive = false;
-      this.chats[user.uuid].unreadMessages.inactive();
-    }
+    this.chats[user.uuid].isActive = false;
+    this.chats[user.uuid].unreadMessages.inactive();
   }
 
   disableUnread(user) {
-    if (user.uuid in this.chats) {
-      this.chats[user.uuid].isActive = true;
-      this.chats[user.uuid].unreadMessages.active();
-      delete this._unreadCount[user.uuid];
-    }
+    this.chats[user.uuid].isActive = true;
+    this.chats[user.uuid].unreadMessages.active();
+    delete this._unreadCount[user.uuid];
   }
 
   unreadCount(user) {
