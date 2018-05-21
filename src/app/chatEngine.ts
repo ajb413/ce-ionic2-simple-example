@@ -20,8 +20,10 @@ export class ChatEngine {
   constructor() {
     this.instance = ChatEngineCore.create(
       {
-        publishKey: 'YOUR PUBLISH KEY HERE',
-        subscribeKey: 'YOUR SUBSCRIBE KEY HERE'
+        // publishKey: 'pub-c-ec52c26b-c68c-4d46-bbd2-4c613ca15ea1',
+        // subscribeKey: 'sub-c-ddc3c73e-5d25-11e8-84ad-b20235bcb09b'
+        publishKey: 'pub-c-61547357-15c5-4b82-8537-5ca8c4ee739d',
+        subscribeKey: 'sub-c-a1c635e4-5d2c-11e8-9b53-6e008aa3b186'
       },
       {
         debug: true,
