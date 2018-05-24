@@ -1,3 +1,4 @@
+import { Events } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { ChatEngineCore } from 'chat-engine';
 
@@ -17,16 +18,14 @@ export class ChatEngine {
   private chats: any = {};
   private _messages: any = {};
   private _unreadCount: any = {};
-  constructor() {
+  constructor(public events: Events) {
     this.instance = ChatEngineCore.create(
       {
-        // publishKey: 'pub-c-ec52c26b-c68c-4d46-bbd2-4c613ca15ea1',
-        // subscribeKey: 'sub-c-ddc3c73e-5d25-11e8-84ad-b20235bcb09b'
         publishKey: 'pub-c-61547357-15c5-4b82-8537-5ca8c4ee739d',
         subscribeKey: 'sub-c-a1c635e4-5d2c-11e8-9b53-6e008aa3b186'
       },
       {
-        debug: true,
+        // debug: true,
         globalChannel: 'chat-engine-simple-example',
         throwErrors: false
       });
@@ -39,11 +38,13 @@ export class ChatEngine {
       this.me = data.me;
       this.me.plugin(random());
 
+      // global chat
+      this.chats['global'] = this.instance.global;
+      this.listen('global');
+      this.events.publish('globalChat:created', this._messages['global']);
+
       this.me.direct.on('$.invite', (payload) => {
         const chat = new this.instance.Chat(payload.data.channel);
-        chat.onAny((a) => {
-          console.log(a);
-        });
 
         this.chats[payload.sender.uuid] = chat;
         this.chats[payload.sender.uuid].plugin(unread());
@@ -65,7 +66,7 @@ export class ChatEngine {
     const chat = this.chats[uuid];
     const messages = this._messages[uuid] = [];
 
-    chat.on('message', (payload) => {
+    const onMessage = (payload) => {
       // if the last message was sent from the same user
       const sameUser = messages.length > 0 && payload.sender.uuid === messages[messages.length - 1].uuid;
 
@@ -81,7 +82,18 @@ export class ChatEngine {
       const msg = { isSelf, userName, sameUser, sender, text };
 
       messages.push(msg);
+    }
+
+    chat.on('message', onMessage);
+
+    let search = chat.search({
+      event: 'message',
+      limit: 6,
     });
+
+    if (uuid === 'global') {
+      search.on('message', onMessage);
+    }
   }
 
   private _unread(event) {
@@ -107,7 +119,7 @@ export class ChatEngine {
   }
 
   getMessages(user) {
-    if (!this.chats[user.uuid]) {
+    if (!this.chats[user.uuid] && user.uuid !== 'global') {
       // create a new chat with that channel
       this.chats[user.uuid] = new this.instance.Chat(new Date().getTime());
 

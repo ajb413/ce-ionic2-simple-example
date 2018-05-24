@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Nav } from 'ionic-angular';
+import { HomePage } from './home';
 import { ChatEngine } from './chatEngine';
 
 @Component({
@@ -7,6 +9,7 @@ import { ChatEngine } from './chatEngine';
 })
 export class AppUsersOnline {
   @Output() open: EventEmitter<any> = new EventEmitter();
+  @ViewChild(Nav) nav: Nav;
   private ce: any;
   private mysearch: string;
 
@@ -50,5 +53,9 @@ export class AppUsersOnline {
     this.open.emit(user);
 
     return false;
+  }
+
+  navigateHome() {
+    this.nav.push(HomePage);
   }
 }

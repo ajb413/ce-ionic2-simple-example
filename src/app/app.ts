@@ -14,7 +14,7 @@ import { ChatEngine } from "./chatEngine";
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
+  rootPage: any = HomePage; //this.openPage('global');
 
   ce: any;
 

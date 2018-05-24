@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavParams } from 'ionic-angular';
-import { ChatEngine } from "./chatEngine";
+import { ChatEngine } from './chatEngine';
 
 @Component({
   selector: 'app-chat',
